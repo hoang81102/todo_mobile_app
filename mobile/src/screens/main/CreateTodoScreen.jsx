@@ -34,7 +34,9 @@ export default function CreateTodoScreen({ navigation }) {
       await createTodo.mutateAsync(form);
       navigation.goBack();
     } catch (err) {
-      Alert.alert("Error", err.response?.data?.detail || "Failed to create todo");
+      const detail = err.response?.data?.detail;
+      const msg = typeof detail === "string" ? detail : Array.isArray(detail) ? detail.map((d) => d.msg || JSON.stringify(d)).join("\n") : err.message || "Failed to create todo";
+      Alert.alert("Error", msg);
     }
   };
 

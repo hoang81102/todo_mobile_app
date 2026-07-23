@@ -39,8 +39,10 @@ export default function TodoDetailScreen({ navigation, route }) {
     try {
       await updateTodo.mutateAsync({ id: todoId, data: form });
       setEditing(false);
-    } catch {
-      Alert.alert("Error", "Failed to update todo");
+    } catch (err) {
+      const detail = err.response?.data?.detail;
+      const msg = typeof detail === "string" ? detail : Array.isArray(detail) ? detail.map((d) => d.msg || JSON.stringify(d)).join("\n") : err.message || "Failed to update todo";
+      Alert.alert("Error", msg);
     }
   };
 

@@ -12,13 +12,23 @@ import {
 } from "react-native";
 import { useAuthStore } from "../../store/authStore";
 
+const getErrorMessage = (err) => {
+  const detail = err.response?.data?.detail;
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    return detail.map((d) => d.msg || JSON.stringify(d)).join("\n");
+  }
+  if (detail && typeof detail === "object") return JSON.stringify(detail);
+  return err.message || "Something went wrong";
+};
+
 export default function RegisterScreen({ navigation }) {
   const register = useAuthStore((s) => s.register);
-  const [form, setForm] = useState({ username: "", email: "", full_name: "", password: "", confirmPassword: "" });
+  const [form, setForm] = useState({ fullName: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!form.username || !form.email || !form.password) {
+    if (!form.fullName || !form.email || !form.password) {
       Alert.alert("Error", "Please fill in all required fields");
       return;
     }
@@ -28,18 +38,17 @@ export default function RegisterScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      await register({ username: form.username, email: form.email, full_name: form.full_name, password: form.password });
+      await register({ fullName: form.fullName, email: form.email, password: form.password });
     } catch (err) {
-      Alert.alert("Registration Failed", err.response?.data?.detail || "Something went wrong");
+      Alert.alert("Registration Failed", getErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
 
   const fields = [
-    { key: "username", label: "Username *", placeholder: "Choose a username", autoCapitalize: "none" },
+    { key: "fullName", label: "Full Name *", placeholder: "Enter your full name" },
     { key: "email", label: "Email *", placeholder: "Enter your email", keyboardType: "email-address", autoCapitalize: "none" },
-    { key: "full_name", label: "Full Name", placeholder: "Enter your full name" },
     { key: "password", label: "Password *", placeholder: "Create a password", secure: true },
     { key: "confirmPassword", label: "Confirm Password *", placeholder: "Repeat your password", secure: true },
   ];

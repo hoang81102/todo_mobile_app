@@ -30,7 +30,7 @@ export const useAuthStore = create((set) => ({
 
   register: async (data) => {
     await authApi.register(data);
-    await authApi.login({ username: data.username, password: data.password });
+    await authApi.login({ email: data.email, password: data.password });
     const user = await authApi.getMe();
     set({ user, isAuthenticated: true });
   },

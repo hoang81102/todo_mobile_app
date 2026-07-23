@@ -61,11 +61,11 @@ export default function ProfileScreen() {
         <View className="items-center mb-8">
           <View className="w-24 h-24 rounded-full bg-primary-600 items-center justify-center mb-4">
             <Text className="text-4xl font-bold text-white">
-              {(user?.full_name || user?.username || "?")[0].toUpperCase()}
+              {(user?.fullName || user?.full_name || user?.email || "?")[0].toUpperCase()}
             </Text>
           </View>
-          <Text className="text-white text-2xl font-bold">{user?.full_name || user?.username}</Text>
-          <Text className="text-slate-400 text-sm mt-1">@{user?.username}</Text>
+          <Text className="text-white text-2xl font-bold">{user?.fullName || user?.full_name || "User"}</Text>
+          <Text className="text-slate-400 text-sm mt-1">{user?.email}</Text>
           <Text className="text-slate-500 text-sm">{user?.email}</Text>
         </View>
 

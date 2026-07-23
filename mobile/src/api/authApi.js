@@ -7,8 +7,8 @@ export const authApi = {
     return res.data;
   },
 
-  login: async ({ username, password }) => {
-    const res = await api.post("/api/auth/login", { username, password });
+  login: async ({ email, password }) => {
+    const res = await api.post("/api/auth/login", { email, password });
     const { access_token } = res.data;
     await SecureStore.setItemAsync("access_token", access_token);
     return res.data;

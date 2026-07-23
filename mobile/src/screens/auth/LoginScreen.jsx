@@ -12,13 +12,23 @@ import {
 } from "react-native";
 import { useAuthStore } from "../../store/authStore";
 
+const getErrorMessage = (err) => {
+  const detail = err.response?.data?.detail;
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    return detail.map((d) => d.msg || JSON.stringify(d)).join("\n");
+  }
+  if (detail && typeof detail === "object") return JSON.stringify(detail);
+  return err.message || "Something went wrong";
+};
+
 export default function LoginScreen({ navigation }) {
   const login = useAuthStore((s) => s.login);
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!form.username || !form.password) {
+    if (!form.email || !form.password) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
@@ -26,7 +36,7 @@ export default function LoginScreen({ navigation }) {
     try {
       await login(form);
     } catch (err) {
-      Alert.alert("Login Failed", err.response?.data?.detail || "Invalid credentials");
+      Alert.alert("Login Failed", getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -51,14 +61,15 @@ export default function LoginScreen({ navigation }) {
           {/* Form */}
           <View className="gap-4">
             <View>
-              <Text className="text-slate-400 text-sm font-medium mb-2">Username</Text>
+              <Text className="text-slate-400 text-sm font-medium mb-2">Email</Text>
               <TextInput
                 className="bg-surface-card border border-slate-700 rounded-xl px-4 py-4 text-white text-base"
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 placeholderTextColor="#475569"
-                value={form.username}
-                onChangeText={(v) => setForm((p) => ({ ...p, username: v }))}
+                value={form.email}
+                onChangeText={(v) => setForm((p) => ({ ...p, email: v }))}
                 autoCapitalize="none"
+                keyboardType="email-address"
               />
             </View>
 
